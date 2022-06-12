@@ -30,7 +30,6 @@ void agregar_cliente();
 int valor, T = 10;
 bool seguir = true, error = false;
 char val[50];
-ifstream Lec;
 
 int main()
 {
