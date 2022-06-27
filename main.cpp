@@ -1,4 +1,4 @@
-#include <cstdlib>
+	#include <cstdlib>
 	#include <iostream>
 	#include <sqlite3.h>
 	#include <conio.h>
@@ -6,7 +6,8 @@
 	#include <string>
 	#include <windows.h>
 	#include <stdlib.h>
-
+	#include <fstream>
+	
 	using namespace std;
     /* ==============================*/
     /*funciones generales*/
@@ -132,25 +133,10 @@
         agregar("Ingrese la cedula ", ",");
         agregar("Ingrese el telefono ", ",");
         agregar("Ingrese la direcion ", "");
-        stetament("","INSERT INTO ", "cliente", "cedula, nombre, apellido, telefono, direccion", aux);
-        getch();
+        stetament("","INSERT INTO ", "cliente", " (cedula, nombre, apellido, telefono, direccion)", " values ("+aux);
+        aux=" ";
 	}
-	void agregar(string titulo ,string coma){
 
-        gotoxy(25, 5);
-        cout << "                                             ";
-        gotoxy(25, 6);
-        cout << "                                             ";
-        gotoxy(25, 5);
-        cout << titulo;
-        gotoxy(25, 6);
-        cin >> cadena;
-
-        aux = aux +" '"+cadena+"'"+coma;
-        cout << aux;
-        getch();
-	}
-	
 	void modul_Reserv(){
 	    do{
 	        efecto();
@@ -311,6 +297,8 @@
 	   	}
 	}
 	bool stetament(string sql, string tipo, string tabla, string campos, string valores){
+		ofstream file;  
+	    file.open("log.txt", ios::app); 
 		bool resul;
 		sql = tipo + tabla + campos + valores+ ");";
 		
@@ -320,20 +308,21 @@
 	    int i;
 	    for (i = 0; i < sizeof(p); i++) {
 	        p[i] = sql[i];
+	       file << "\n" << p[i];
 	    }/*fin de conversion*/
-	    system("cls");
-		cout << *p;
-		getch();
+	    
 		rc = sqlite3_exec(db, p, callback, 0, &zErrMsg);
 	   	if( rc != SQLITE_OK ){
             system("cls");
 	      	fprintf(stderr, "SQL error: %s\n", zErrMsg);
+		    file << "\n" << zErrMsg << endl;// edito
 	      	sqlite3_free(zErrMsg);
 	      	resul = false;
 	   	}else{
 	      	fprintf(stdout, "Ejecutado sin noveda\n");
        		resul = true;
 	   	}
+	   	file.close();
 		return resul;
 	}
 	static int callback(void *NotUsed, int argc, char **argv, char **azColName){
@@ -343,5 +332,20 @@
 	   }
 	   printf("\n");
 	   return 0;
+	}
+	void agregar(string titulo ,string coma){
+
+        gotoxy(25, 5);
+        cout << "                                             ";
+        gotoxy(25, 6);
+        cout << "                                             ";
+        gotoxy(25, 5);
+        cout << titulo;
+        gotoxy(25, 6);
+        cin >> cadena;
+
+        aux = aux +" '"+cadena+"'"+coma;
+        cout << aux;
+        getch();
 	}
 	/* ==============================*/
