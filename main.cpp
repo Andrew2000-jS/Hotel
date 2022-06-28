@@ -14,11 +14,19 @@
 	void menu();
 	void modul_Habitac();
 	void agregar_cliente();
+	void agregar_Tip_habit();
+	void agregar_habitac();
+	 
+	void ing_reg(string titulo ,string coma);
 	
-	void agregar(string titulo ,string coma);
-
 	void modul_Reserv();
+	void agregar_reserv();
+	void agregar_cobro();
+	
 	void modul_busqueda();
+
+	void consultar_client();
+	void consultar_habitrac();
 	void validar(int Max_op, int mn);
 	void efecto();
 	void gotoxy(int x, int y);
@@ -37,7 +45,8 @@
     sqlite3 *db;
     char *zErrMsg = 0;
 	int rc;
-
+	ofstream file; //para los log
+	const char* data = "Callback function called";
 	int main(int argc, char* argv[]){
         conexion();
         menu();
@@ -55,7 +64,7 @@
 	        gotoxy(25, 5);
 	        cout << "1. Modulo Registro de Habitaciones y clientes";
 	        gotoxy(25, 6);
-	        cout << "2. Modulo Registro de reservas y prereservas ";
+	        cout << "2. Modulo Registro de reservas";
 	        gotoxy(25, 7);
 	        cout << "3. Modulo Busqueda de habitaciones y clientes ";
 	        gotoxy(25, 8);
@@ -97,9 +106,9 @@
 	        gotoxy(25, 5);
 	        cout << "1. Registrar cliente ";
 	        gotoxy(25, 6);
-	        cout << "2. Registrar Habitaciones";
+	        cout << "2. Registrar Tipos de Habitaciones";
 	        gotoxy(25, 7);
-	        cout << "3. Registrar Tipos de Habitaciones";
+	        cout << "3. Registrar Habitaciones";
 	        gotoxy(25, 8);
 	        cout << "4. atras";
 	        gotoxy(25, 10);
@@ -113,9 +122,13 @@
 	            agregar_cliente();
 	            break;
 	        case 2:
+				efecto();
+	            agregar_Tip_habit();
 	            break;
 
 	        case 3:
+                efecto();
+	            agregar_habitac();
 	            break;
 	        case 4:
 	            menu();
@@ -128,15 +141,37 @@
         cout << " Agregar cliente	";
         gotoxy(26, 4);
         cout << "-------------------------------------------";
-		agregar("Ingrese el nombre ", ",");
-        agregar("Ingrese el apellido ", ",");
-        agregar("Ingrese la cedula ", ",");
-        agregar("Ingrese el telefono ", ",");
-        agregar("Ingrese la direcion ", "");
-        stetament("","INSERT INTO ", "cliente", " (cedula, nombre, apellido, telefono, direccion)", " values ("+aux);
+		ing_reg("Ingrese la cedula ", ",");
+        ing_reg("Ingrese el nombre ", ",");
+        ing_reg("Ingrese el apellido ", ",");
+        ing_reg("Ingrese el telefono ", ",");
+        ing_reg("Ingrese la direcion ", "");
+        if(stetament("","INSERT INTO ", "cliente", " (cedula, nombre, apellido, telefono, direccion)", " values ("+aux))
+		{system("cls");  cout << "registrado"; getch(); }
+		aux=" ";
+	}
+	void agregar_Tip_habit(){
+        gotoxy(26, 3);
+        cout << " Agregar Tipos de Habitaciones	";
+        gotoxy(26, 4);
+        cout << "-------------------------------------------";
+        ing_reg("Ingrese el codigo del tipo de habitacion", ",");
+		ing_reg("Ingrese el nombre del tipo de habitacion", "");
+        if(stetament("","INSERT INTO ", "[tipo_de _habitaciones]", " ( tipoHB_id, descripcion)", " values ("+aux))
+		{system("cls");  cout << "registrado"; getch(); }
+		aux=" ";
+	}
+	void agregar_habitac(){
+        gotoxy(26, 3);
+        cout << " Agregar Habitaciones	";
+        gotoxy(26, 4);
+        cout << "-------------------------------------------";
+        ing_reg("Ingrese el codigo de la habitacion ", ",");
+        ing_reg("Ingrese el precio de la habitacion ", "");
+        if(stetament("","INSERT INTO ", "habitaciones", " (tipoHB_id, precio)", " values ("+aux))
+		{system("cls");  cout << "registrado"; getch(); }
         aux=" ";
 	}
-
 	void modul_Reserv(){
 	    do{
 	        efecto();
@@ -148,30 +183,52 @@
 	        gotoxy(25, 5);
 	        cout << "1. Registrar prereserva ";
 	        gotoxy(25, 6);
-	        cout << "2. Registrar reserva";
+	        cout << "2. Registrar cobro";
 	        gotoxy(25, 7);
-	        cout << "3. Registrar cobro";
-	        gotoxy(25, 8);
-	        cout << "4. atras";
-	        gotoxy(25, 10);
+	        cout << "3. atras";
+	        gotoxy(25, 9);
 	        cout << "Escriba el numero de la opcion deseado :";
 	        cin >> val;
 	        // valido la entrada por el usuario
 	        validar(4, 2);
 	        switch (valor){
-	        case 1:
+	        case 1: agregar_reserv();
 	            break;
-	        case 2:
+	        case 2: agregar_cobro();
 	            break;
 	        case 3:
-	            break;
-	        case 4:
 	            menu();
 	            break;
 	        }
 	    } while (seguir);
 	}
-
+	void agregar_reserv(){
+        gotoxy(26, 3);
+        cout << " Agregar Habitaciones	";
+        gotoxy(26, 4);
+        cout << "-------------------------------------------";
+        ing_reg("Ingrese la cedula del cliente ", ",");
+        ing_reg("Ingrese el codigo de la habitacion ", ",");
+        ing_reg("Ingrese los días que se quedara ", ",");
+        ing_reg("Ingrese el estado de su solicitud ", ",");
+        ing_reg("Ingrese el monto a pagar ", "");
+        if(stetament("","INSERT INTO ", "reserva", " ( cedula,  habitaciones_id,  estadia, estado,  monto )", " values ("+aux))
+		{system("cls");  cout << "registrado"; getch(); }
+        aux=" ";
+	}
+	void agregar_cobro(){
+        gotoxy(26, 3);
+        cout << " Agregar Habitaciones	";
+        gotoxy(26, 4);
+        cout << "-------------------------------------------";
+        ing_reg("Ingrese la cedula del cliente", ",");
+        ing_reg("Ingrese el numero de reserva", ",");
+        ing_reg("Ingrese forma de pago", ",");
+        ing_reg("Ingrese el monto", "");
+        if(stetament("","INSERT INTO ", "cobro", " ( cedula,  reserva_id,  forma_de_pago, monto)", " values ("+aux))
+		{system("cls");  cout << "registrado"; getch(); }
+        aux=" ";
+	}
 	void modul_busqueda(){
 	    do{
 	        efecto();
@@ -180,9 +237,9 @@
 	        gotoxy(26, 4);
 	        cout << "-------------------------------------------";
 	        gotoxy(25, 5);
-	        cout << "1. Buscar habitaciones ";
+	        cout << "1. Buscar todos los clientes  ";
 	        gotoxy(25, 6);
-	        cout << "2. Buscar clientes";
+	        cout << "2. Buscar todas las habitaciones";
 	        gotoxy(25, 7);
 	        cout << "3. atras";
 	        gotoxy(25, 10);
@@ -190,7 +247,7 @@
 	        cin >> val;
 	        validar(3, 2);
 	        switch (valor){
-	        case 1:
+	        case 1: consultar_client();
 	            break;
 	        case 2:
 	            break;
@@ -200,7 +257,22 @@
 	        }
 	    } while (seguir);
 	}
-
+	void consultar_client(){
+        gotoxy(26, 3);
+        cout << " consultar	clientes";
+        gotoxy(26, 4);
+        cout << "-------------------------------------------";
+        stetament("","select ", "*", "from", " cliente --");
+        aux=" ";
+	}
+	void consultar_habitrac(){
+        gotoxy(26, 3);
+        cout << " consultar	habitaciones";
+        gotoxy(26, 4);
+        cout << "-------------------------------------------";
+        stetament("","select ", "*", "from", " habitaciones --");
+        aux=" ";
+	}
 	void efecto(){
 	    system("cls");
 	    // Col_ini - final , Fil_ini - final
@@ -287,54 +359,47 @@
 	/* funciones para bases de datos*/
 	/* ==============================*/
 	void conexion(){
+        file.open("log.txt", ios::app);
 		rc = sqlite3_open("Hotel.db", &db);
 	    if( rc ){
-	      	fprintf(stderr, "no se pudo conectar con la base de datos: %s\n", sqlite3_errmsg(db));
-		  	exit(0);
+			file <<"no se pudo conectar con la base de datos: %s\n"<<sqlite3_errmsg(db);
 	   	}
-	   	else{
-	      	fprintf(stderr, "conectado con la base de datos\n");
-	   	}
+	   	file.close();
 	}
 	bool stetament(string sql, string tipo, string tabla, string campos, string valores){
-		ofstream file;  
 	    file.open("log.txt", ios::app); 
 		bool resul;
 		sql = tipo + tabla + campos + valores+ ");";
-		
 		/*inicio de conversion*/
     	// declaring character array : p
 	    char p[sql.length()];
 	    int i;
 	    for (i = 0; i < sizeof(p); i++) {
 	        p[i] = sql[i];
-	       file << "\n" << p[i];
+	       file << p[i];
 	    }/*fin de conversion*/
-	    
-		rc = sqlite3_exec(db, p, callback, 0, &zErrMsg);
+		rc = sqlite3_exec(db, p, callback, (void*)data, &zErrMsg);
 	   	if( rc != SQLITE_OK ){
-            system("cls");
-	      	fprintf(stderr, "SQL error: %s\n", zErrMsg);
 		    file << "\n" << zErrMsg << endl;// edito
 	      	sqlite3_free(zErrMsg);
 	      	resul = false;
 	   	}else{
-	      	fprintf(stdout, "Ejecutado sin noveda\n");
        		resul = true;
 	   	}
 	   	file.close();
 		return resul;
 	}
-	static int callback(void *NotUsed, int argc, char **argv, char **azColName){
+	static int callback(void *data, int argc, char **argv, char **azColName){
+ 	   system("cls");
 	   int i;
 	   for(i=0; i<argc; i++){
 	      printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
 	   }
 	   printf("\n");
+	   getch();
 	   return 0;
 	}
-	void agregar(string titulo ,string coma){
-
+	void ing_reg(string titulo ,string coma){
         gotoxy(25, 5);
         cout << "                                             ";
         gotoxy(25, 6);
@@ -343,7 +408,6 @@
         cout << titulo;
         gotoxy(25, 6);
         cin >> cadena;
-
         aux = aux +" '"+cadena+"'"+coma;
         cout << aux;
         getch();
